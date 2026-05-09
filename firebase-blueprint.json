@@ -1,0 +1,116 @@
+{
+  "entities": {
+    "stores": {
+      "title": "Store",
+      "description": "Configuration and details for the Shopify store integrated with ORENVY.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "shopifyDomain": { "type": "string" },
+        "apiKey": { "type": "string" },
+        "supportEmail": { "type": "string" },
+        "languages": { "type": "array", "items": { "type": "string" } },
+        "theme": { "type": "string", "enum": ["light", "dark"] },
+        "whatsappNumber": { "type": "string" },
+        "telegramUsername": { "type": "string" },
+        "instagramHandle": { "type": "string" }
+      },
+      "required": ["name", "shopifyDomain"]
+    },
+    "products": {
+      "title": "Product",
+      "description": "Product information synchronized from Shopify.",
+      "type": "object",
+      "properties": {
+        "shopifyId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "price": { "type": "number" },
+        "currency": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "inventoryQuantity": { "type": "number" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "vendor": { "type": "string" }
+      },
+      "required": ["shopifyId", "title", "price"]
+    },
+    "orders": {
+      "title": "Order",
+      "description": "Order information for customer support and tracking.",
+      "type": "object",
+      "properties": {
+        "shopifyId": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "customerName": { "type": "string" },
+        "totalPrice": { "type": "number" },
+        "currency": { "type": "string" },
+        "status": { "type": "string", "enum": ["unfulfilled", "fulfilled", "shipped", "delivered", "cancelled"] },
+        "trackingNumber": { "type": "string" },
+        "trackingUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "items": { "type": "array", "items": { "type": "object" } }
+      },
+      "required": ["shopifyId", "orderNumber", "customerEmail"]
+    },
+    "chats": {
+      "title": "Chat",
+      "description": "Customer support chat session.",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string" },
+        "customerEmail": { "type": "string" },
+        "messages": { 
+          "type": "array", 
+          "items": { 
+            "type": "object",
+            "properties": {
+              "role": { "type": "string", "enum": ["user", "model"] },
+              "content": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" }
+            }
+          } 
+        },
+        "status": { "type": "string", "enum": ["open", "closed"] },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "language": { "type": "string" }
+      },
+      "required": ["messages", "status"]
+    },
+    "analytics": {
+      "title": "AnalyticsSnapshot",
+      "description": "Aggregated data for the admin dashboard.",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "format": "date" },
+        "totalChats": { "type": "number" },
+        "totalConversions": { "type": "number" },
+        "topProducts": { "type": "array", "items": { "type": "object" } },
+        "countries": { "type": "object" }
+      },
+      "required": ["date"]
+    }
+  },
+  "firestore": {
+    "/stores/{storeId}": {
+      "schema": "stores",
+      "description": "Store-specific configuration."
+    },
+    "/stores/{storeId}/products/{productId}": {
+      "schema": "products",
+      "description": "Product catalog for a specific store."
+    },
+    "/stores/{storeId}/orders/{orderId}": {
+      "schema": "orders",
+      "description": "Orders for a specific store."
+    },
+    "/stores/{storeId}/chats/{chatId}": {
+      "schema": "chats",
+      "description": "Support chat history for a specific store."
+    },
+    "/stores/{storeId}/analytics/{snapshotId}": {
+      "schema": "analytics",
+      "description": "Periodic analytics snapshots."
+    }
+  }
+}
